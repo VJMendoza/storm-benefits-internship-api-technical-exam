@@ -80,9 +80,9 @@ def get_comp_rec_name(comp_name):
     return jsonify(comps_schema.dump(comp))
 
 
-# route for updating a company record
-@app.route("/company/<comp_id>", methods=["PUT"])
-def update_comp_rec(comp_id):
+# route for updating a company record by id
+@app.route("/company/<int:comp_id>", methods=["PUT"])
+def update_comp_rec_id(comp_id):
     comp = Company.query.get(comp_id)
     comp_name = request.json['comp_name']
     emp_count = request.json['emp_count']
@@ -100,7 +100,27 @@ def update_comp_rec(comp_id):
     return jsonify(comp_schema.dump(comp))
 
 
-# route for deleting a company record
+# route for updating a company record by name
+@app.route("/company/<comp_name>", methods=["PUT"])
+def update_comp_rec_name(comp_name):
+    comp = Company.query.filter_by(comp_name=comp_name).first()
+    comp_name = request.json['comp_name']
+    emp_count = request.json['emp_count']
+    comp_loc = request.json['comp_loc']
+    comp_email = request.json['comp_email']
+    comp_ind = request.json['comp_ind']
+
+    comp.comp_name = comp_name
+    comp.emp_count = emp_count
+    comp.comp_loc = comp_loc
+    comp.comp_email = comp_email
+    comp.comp_ind = comp_ind
+
+    db.session.commit()
+    return jsonify(comp_schema.dump(comp))
+
+
+# route for deleting a company record by id
 @app.route("/company/<int:comp_id>", methods=["DELETE"])
 def delete_comp_rec_id(comp_id):
     comp = Company.query.get(comp_id)
@@ -110,6 +130,7 @@ def delete_comp_rec_id(comp_id):
     return jsonify(comp_schema.dump(comp))
 
 
+# route for deleting a company record by name
 @app.route("/company/<comp_name>", methods=["DELETE"])
 def delete_comp_rec_name(comp_name):
     comp = Company.query.filter_by(comp_name=comp_name).first()
