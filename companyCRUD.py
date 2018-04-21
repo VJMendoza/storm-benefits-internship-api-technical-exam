@@ -101,9 +101,18 @@ def update_comp_rec(comp_id):
 
 
 # route for deleting a company record
-@app.route("/company/<comp_id>", methods=["DELETE"])
-def delete_comp_rec(comp_id):
+@app.route("/company/<int:comp_id>", methods=["DELETE"])
+def delete_comp_rec_id(comp_id):
     comp = Company.query.get(comp_id)
+    db.session.delete(comp)
+    db.session.commit()
+
+    return jsonify(comp_schema.dump(comp))
+
+
+@app.route("/company/<comp_name>", methods=["DELETE"])
+def delete_comp_rec_name(comp_name):
+    comp = Company.query.filter_by(comp_name=comp_name).first()
     db.session.delete(comp)
     db.session.commit()
 
